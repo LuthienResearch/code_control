@@ -19,14 +19,17 @@ project_root = Path(__file__).parents[1]
 env_path = project_root / ".env"
 load_dotenv(dotenv_path=env_path)
 
-# Get API key from environment
-API_KEY = os.getenv("ANTHROPIC_API_KEY")
-if not API_KEY:
-    print("Error: ANTHROPIC_API_KEY not found in environment or .env file")
-    sys.exit(1)
-
 # LCC proxy URL
 LCC_URL = os.getenv("LCC_URL", "http://localhost:8000")
+
+# Check if we have an API key, but only warn (API key might be on server)
+API_KEY = os.getenv("ANTHROPIC_API_KEY")
+if not API_KEY:
+    print("Warning: No ANTHROPIC_API_KEY found in environment or .env file")
+    print("If the key is configured on the server side, you can ignore this warning")
+    print("Otherwise, the request will likely fail authentication\n")
+    # Use a dummy key since the server may have its own
+    API_KEY = "dummy_key_server_has_real_one"
 
 
 def create_client() -> OpenAI:

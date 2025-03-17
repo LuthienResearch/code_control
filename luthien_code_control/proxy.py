@@ -21,11 +21,20 @@ async def proxy_request(request: Request, target_url: str) -> Dict[str, Any]:
     Returns:
         The response from the target URL
     """
+    from luthien_code_control.config import get_api_key, get_auth_header
+    
     # Get the request body
     body = await request.json()
     
     # Get headers, but exclude host which will be set by httpx
     headers = {k: v for k, v in request.headers.items() if k.lower() != "host"}
+    
+    # Add API key from config if available and not already in headers
+    api_key = get_api_key()
+    auth_header = get_auth_header()
+    
+    if api_key and auth_header.lower() not in {k.lower(): True for k in headers}:
+        headers[auth_header] = api_key
     
     # Forward the request to the target URL
     async with httpx.AsyncClient() as client:
