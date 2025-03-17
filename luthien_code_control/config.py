@@ -5,8 +5,8 @@ This module contains configuration settings for the LCC application.
 """
 import os
 
-# Default OpenAI API URL
-DEFAULT_TARGET_URL = "https://api.openai.com/v1"
+# Default API URL (Anthropic OpenAI-compatible API)
+DEFAULT_TARGET_URL = "https://api.anthropic.com/v1"
 
 # Get target URL from environment variable, or use default
 TARGET_URL = os.getenv("LCC_TARGET_URL", DEFAULT_TARGET_URL)
