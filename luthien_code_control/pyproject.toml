@@ -1,0 +1,62 @@
+[project]
+name = "luthien-code-control"
+version = "0.1.0"
+description = "Luthien Code Control - AI Control application that proxies OpenAI API requests"
+authors = [
+    {name = "Luthien Team"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi (>=0.115.11,<0.116.0)",
+    "uvicorn (>=0.34.0,<0.35.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "pydantic (>=2.10.6,<3.0.0)",
+    "typing-extensions (>=4.12.2,<5.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+pytest-cov = "^6.0.0"
+ruff = "^0.11.0"
+black = "^25.1.0"
+mypy = "^1.15.0"
+isort = "^6.0.1"
+httpx = "^0.28.1"
+pytest-asyncio = "^0.25.3"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+
+[tool.mypy]
+python_version = "3.13"
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_generics = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+strict_optional = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+select = ["E", "F", "B", "I", "N", "UP", "PL", "RUF"]
+
+[tool.black]
+line-length = 88
+target-version = ["py313"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
