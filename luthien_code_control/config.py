@@ -6,7 +6,7 @@ This module contains configuration settings for the LCC application.
 import os
 from typing import Optional
 
-# Default API URL (Anthropic OpenAI-compatible API)
+# Default API URL (Anthropic API with OpenAI compatibility)
 DEFAULT_TARGET_URL = "https://api.anthropic.com/v1"
 
 # Get target URL from environment variable, or use default
@@ -21,6 +21,7 @@ API_KEY_HEADER = os.getenv("LCC_API_KEY_HEADER", "x-api-key")
 API_PROVIDER = os.getenv("LCC_API_PROVIDER", "anthropic")
 DEFAULT_HEADER_MAP = {
     "anthropic": "x-api-key",
+    "anthropic-openai": "Authorization",  # For OpenAI compatibility endpoint
     "openai": "Authorization",
 }
 

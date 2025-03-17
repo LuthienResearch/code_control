@@ -8,7 +8,7 @@ It uses the OpenAI SDK but points it to the local LCC server.
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 import httpx
 from dotenv import load_dotenv
@@ -22,21 +22,15 @@ load_dotenv(dotenv_path=env_path)
 # LCC proxy URL
 LCC_URL = os.getenv("LCC_URL", "http://localhost:8000")
 
-# Check if we have an API key, but only warn (API key might be on server)
-API_KEY = os.getenv("ANTHROPIC_API_KEY")
-if not API_KEY:
-    print("Warning: No ANTHROPIC_API_KEY found in environment or .env file")
-    print("If the key is configured on the server side, you can ignore this warning")
-    print("Otherwise, the request will likely fail authentication\n")
-    # Use a dummy key since the server may have its own
-    API_KEY = "dummy_key_server_has_real_one"
+# Get client API key (optional - the server now handles API keys)
+CLIENT_API_KEY = os.getenv("CLIENT_API_KEY", "client_1234")
 
 
 def create_client() -> OpenAI:
     """Create an OpenAI client pointing to the LCC proxy."""
     return OpenAI(
         base_url=LCC_URL,
-        api_key=API_KEY,
+        api_key=CLIENT_API_KEY,  # Just a client identifier, not the actual provider API key
         # Disable SSL verification since we're using HTTP locally
         http_client=httpx.Client(verify=False),
     )
@@ -67,7 +61,8 @@ def test_chat_completion() -> Dict[str, Any]:
 def main() -> None:
     """Run all tests."""
     print(f"Testing LCC proxy at {LCC_URL}")
-    print(f"Using API key: {API_KEY[:5]}...{API_KEY[-4:]}")
+    print(f"Using client identifier: {CLIENT_API_KEY}")
+    print("The actual provider API key is managed by the LCC server")
     
     # Run tests
     chat_result = test_chat_completion()
