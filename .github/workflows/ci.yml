@@ -32,20 +32,23 @@ jobs:
     - name: Install dependencies
       run: poetry install --no-interaction
     
-    - name: Format code
+    # For PRs: Format the code and commit changes (no need to check after formatting)
+    - name: Format code and commit (PR only)
       if: github.event_name == 'pull_request'
       run: |
         poetry run black .
         poetry run isort .
     
-    - name: Commit formatting changes
+    - name: Commit formatting changes (PR only)
       if: github.event_name == 'pull_request'
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: "Auto-format code with Black and isort"
         file_pattern: "*.py"
     
-    - name: Run linting check
+    # For pushes to main: Just check formatting (don't modify the code)
+    - name: Check code formatting (push to main only)
+      if: github.event_name == 'push'
       run: |
         poetry run black --check .
         poetry run isort --check .
