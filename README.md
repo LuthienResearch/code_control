@@ -33,7 +33,7 @@ luthien_code_control/
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/luthien-code-control.git
+git clone https://github.com/jaidhyani/luthien-code-control.git
 cd luthien-code-control
 
 # Install dependencies
