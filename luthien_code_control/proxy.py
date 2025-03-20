@@ -2,11 +2,12 @@
 Proxy module for handling API requests.
 
 This module is responsible for proxying requests to the API
-and applying security controls.
+and applying security controls. It uses the OpenAI SDK to
+communicate with Anthropic and other compatible APIs.
 """
-from typing import Any, Dict, Optional
-import json
 import asyncio
+import json
+from typing import Any, Dict, Optional
 
 from fastapi import Request
 from openai import AsyncOpenAI, OpenAI
