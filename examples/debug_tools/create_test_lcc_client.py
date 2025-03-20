@@ -17,7 +17,7 @@ LCC_URL = "http://localhost:8000"
 API_KEY = "client_1234"
 
 
-async def test_direct_request():
+async def test_direct_request() -> None:
     """Test a direct API request to the LCC server."""
     # Create a chat completions request
     url = f"{LCC_URL}/chat/completions"
@@ -64,7 +64,7 @@ async def test_direct_request():
         print(f"Request failed: {e}")
 
 
-async def main():
+async def main() -> None:
     """Run the test."""
     await test_direct_request()
 

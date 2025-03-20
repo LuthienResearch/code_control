@@ -10,7 +10,7 @@ from luthien_code_control import proxy
 
 
 @pytest.mark.asyncio
-async def test_proxy_request():
+async def test_proxy_request() -> None:
     """Test the proxy_request function."""
     # Create a mock request
     mock_request = AsyncMock(spec=Request)

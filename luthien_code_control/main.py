@@ -4,11 +4,12 @@ Luthien Code Control (LCC) - A proxy for OpenAI-compatible API endpoints.
 This module serves as the main entry point for the LCC application.
 """
 
-from typing import Any, Dict
+from typing import Any, Callable, Dict, Union
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import JSONResponse
+from fastapi.routing import APIRoute
 
 from luthien_code_control import config, control, proxy
 
@@ -19,14 +20,18 @@ app = FastAPI(
 )
 
 
-@app.get("/")
-async def root():
+@app.get("/", response_model=Dict[str, str])
+async def root() -> dict[str, str]:
     """Root endpoint for health check."""
     return {"status": "ok", "message": "Luthien Code Control is running"}
 
 
-@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def api_proxy(request: Request, path: str):
+@app.api_route(
+    "/{path:path}",
+    methods=["GET", "POST", "PUT", "DELETE"],
+    response_model=Union[JSONResponse, Dict[str, Any]],
+)
+async def api_proxy(request: Request, path: str) -> Union[JSONResponse, Dict[str, Any]]:
     """
     Proxy endpoint for the OpenAI API.
 

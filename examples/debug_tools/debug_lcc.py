@@ -9,7 +9,7 @@ import os
 from luthien_code_control.config import TARGET_URL, get_api_key, get_auth_header
 
 
-def debug_config():
+def debug_config() -> None:
     """Debug the configuration."""
     print("=== LCC Configuration Debug ===")
     print(f"Target URL: {TARGET_URL}")

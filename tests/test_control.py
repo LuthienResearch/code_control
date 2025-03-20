@@ -5,7 +5,7 @@ import pytest
 from luthien_code_control import control
 
 
-def test_analyze_request():
+def test_analyze_request() -> None:
     """Test the analyze_request function."""
     request_data = {
         "model": "gpt-4",
@@ -19,7 +19,7 @@ def test_analyze_request():
     assert modified_data == request_data
 
 
-def test_analyze_response():
+def test_analyze_response() -> None:
     """Test the analyze_response function."""
     response_data = {
         "id": "chatcmpl-123",

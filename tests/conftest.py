@@ -7,6 +7,6 @@ from luthien_code_control.main import app
 
 
 @pytest.fixture
-def client():
+def client() -> TestClient:
     """Return a test client for the FastAPI app."""
     return TestClient(app)
