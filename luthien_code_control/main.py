@@ -29,7 +29,7 @@ async def root() -> dict[str, str]:
 @app.api_route(
     "/{path:path}",
     methods=["GET", "POST", "PUT", "DELETE"],
-    response_model=Union[JSONResponse, Dict[str, Any]],
+    response_model=None,
 )
 async def api_proxy(request: Request, path: str) -> Union[JSONResponse, Dict[str, Any]]:
     """
@@ -73,7 +73,7 @@ async def api_proxy(request: Request, path: str) -> Union[JSONResponse, Dict[str
                     status_code=403,
                 )
 
-            # Return the (possibly modified) response
+            # Return the modified response
             return modified_response
 
         except Exception as proxy_error:

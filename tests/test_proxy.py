@@ -1,65 +1,81 @@
-"""Tests for the proxy module."""
-
-import json
+from typing import Any, Dict
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi import Request
 
-from luthien_code_control import proxy
+from luthien_code_control.proxy import handle_chat_completion, proxy_request
 
 
 @pytest.mark.asyncio
-async def test_proxy_request() -> None:
-    """Test the proxy_request function."""
-    # Create a mock request
-    mock_request = AsyncMock(spec=Request)
+async def test_proxy_request_missing_api_key() -> None:
+    """Test proxy_request when API key is not configured"""
+    mock_request = MagicMock(spec=Request)
     mock_request.method = "POST"
-    mock_request.headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer test",
-    }
-    mock_request.json = AsyncMock(
-        return_value={
-            "model": "gpt-4",
-            "messages": [{"role": "user", "content": "Hello"}],
-        }
-    )
 
-    # Create expected response data
-    response_data = {
-        "id": "chatcmpl-123",
-        "object": "chat.completion",
-        "model": "gpt-4",
-        "choices": [
-            {
-                "index": 0,
-                "message": {
-                    "role": "assistant",
-                    "content": "Hello there! How can I help you today?",
-                },
-                "finish_reason": "stop",
-            }
-        ],
-    }
+    with patch("luthien_code_control.proxy.get_api_key", return_value=None):
+        response = await proxy_request(
+            mock_request, "https://api.example.com/chat/completions"
+        )
+        assert response == {"error": "API key not configured on server"}
 
-    # Create a mock response that's not an AsyncMock
+
+@pytest.mark.asyncio
+async def test_proxy_request_unsupported_endpoint() -> None:
+    """Test proxy_request with an unsupported endpoint"""
+    mock_request = MagicMock(spec=Request)
+    mock_request.method = "POST"
+    mock_request.json = AsyncMock(return_value={})
+
+    with patch("luthien_code_control.proxy.get_api_key", return_value="test-key"):
+        response = await proxy_request(
+            mock_request, "https://api.example.com/unsupported"
+        )
+        assert response == {"error": "Endpoint not supported: unsupported"}
+
+
+@pytest.mark.asyncio
+async def test_handle_chat_completion_success() -> None:
+    """Test successful chat completion request"""
     mock_response = MagicMock()
-    mock_response.json.return_value = response_data
+    mock_response.model_dump.return_value = {
+        "choices": [{"message": {"content": "Test response"}}]
+    }
 
-    # Patch the httpx client
-    with patch("httpx.AsyncClient") as mock_client:
-        mock_client_instance = AsyncMock()
-        mock_client.return_value.__aenter__.return_value = mock_client_instance
-        mock_client_instance.request.return_value = mock_response
+    mock_client = MagicMock()
+    mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
-        # Call the function
-        result = await proxy.proxy_request(
-            mock_request, "https://api.example.com/v1/chat/completions"
+    with patch("luthien_code_control.proxy.AsyncOpenAI", return_value=mock_client):
+        request_data = {
+            "model": "claude-3-5-sonnet-20240620",
+            "messages": [{"role": "user", "content": "Hello"}],
+            "max_tokens": 100,
+            "temperature": 0.7,
+        }
+
+        response = await handle_chat_completion(
+            "test-key", request_data, "https://api.example.com/chat/completions"
         )
 
-        # Check the result
-        assert result == response_data
+        assert "choices" in response
+        assert len(response["choices"]) == 1
 
-        # Check that the client was called correctly
-        mock_client_instance.request.assert_called_once()
+
+@pytest.mark.asyncio
+async def test_handle_chat_completion_error() -> None:
+    """Test chat completion request with API error"""
+    mock_client = MagicMock()
+    mock_client.chat.completions.create = AsyncMock(side_effect=Exception("API Error"))
+
+    with patch("luthien_code_control.proxy.AsyncOpenAI", return_value=mock_client):
+        request_data = {
+            "model": "claude-3-5-sonnet-20240620",
+            "messages": [{"role": "user", "content": "Hello"}],
+        }
+
+        response = await handle_chat_completion(
+            "test-key", request_data, "https://api.example.com/chat/completions"
+        )
+
+        assert "error" in response
+        assert "API request failed" in response["error"]

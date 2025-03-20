@@ -7,6 +7,8 @@ which should be modified, and which should be rejected.
 
 from typing import Any, Dict, Tuple, Union
 
+from fastapi.responses import JSONResponse
+
 
 def analyze_request(request_data: Dict[str, Any]) -> Tuple[bool, str, Dict[str, Any]]:
     """
@@ -26,7 +28,7 @@ def analyze_request(request_data: Dict[str, Any]) -> Tuple[bool, str, Dict[str, 
     return True, "Request allowed", request_data
 
 
-def analyze_response(response_data: Dict[str, Any]) -> Tuple[bool, str, Dict[str, Any]]:
+def analyze_response(response_data: Dict[str, Any]) -> Tuple[bool, str, JSONResponse]:
     """
     Analyze a response to determine if it should be allowed, modified, or rejected.
 
@@ -37,7 +39,7 @@ def analyze_response(response_data: Dict[str, Any]) -> Tuple[bool, str, Dict[str
         A tuple containing:
         - allowed: Whether the response is allowed
         - reason: The reason for allowing, modifying, or rejecting
-        - modified_data: The modified response data (if any)
+        - modified_data: The modified response data as a JSONResponse
     """
     # Check for Anthropic error and translate it to OpenAI format if needed
     if isinstance(response_data, dict) and response_data.get("type") == "error":
@@ -54,7 +56,7 @@ def analyze_response(response_data: Dict[str, Any]) -> Tuple[bool, str, Dict[str
             }
         }
         print(f"Converted Anthropic error format to OpenAI format")
-        return True, "Converted error format", converted_error
+        return True, "Converted error format", JSONResponse(content=converted_error)
 
     # If we have an Anthropic response, convert it to OpenAI format
     if (
@@ -100,11 +102,15 @@ def analyze_response(response_data: Dict[str, Any]) -> Tuple[bool, str, Dict[str
                 ],
             }
             print("Converted Anthropic response format to OpenAI format")
-            return True, "Converted response format", openai_format
+            return (
+                True,
+                "Converted response format",
+                JSONResponse(content=openai_format),
+            )
         except Exception as e:
             print(f"Error converting Anthropic response to OpenAI format: {e}")
             # If conversion fails, just return the original
 
     # Placeholder implementation - in a real system this would implement
     # security controls and policies
-    return True, "Response allowed", response_data
+    return True, "Response allowed", JSONResponse(content=response_data)

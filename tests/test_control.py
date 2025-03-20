@@ -1,6 +1,7 @@
 """Tests for the control module."""
 
 import pytest
+from fastapi.responses import JSONResponse
 
 from luthien_code_control import control
 
@@ -20,11 +21,14 @@ def test_analyze_request() -> None:
 
 
 def test_analyze_response() -> None:
-    """Test the analyze_response function."""
+    """Test the analyze_response function with a chat completion response."""
     response_data = {
         "id": "chatcmpl-123",
         "object": "chat.completion",
+        "created": 1677652288,
         "model": "gpt-4",
+        "system_fingerprint": "fp_44709d6fcb",
+        "usage": {"prompt_tokens": 9, "completion_tokens": 12, "total_tokens": 21},
         "choices": [
             {
                 "index": 0,
@@ -32,6 +36,7 @@ def test_analyze_response() -> None:
                     "role": "assistant",
                     "content": "Hello there! How can I help you today?",
                 },
+                "logprobs": None,
                 "finish_reason": "stop",
             }
         ],
@@ -41,4 +46,5 @@ def test_analyze_response() -> None:
     # Basic test for now - just make sure it doesn't crash
     assert allowed is True
     assert reason == "Response allowed"
-    assert modified_data == response_data
+    assert isinstance(modified_data, JSONResponse)
+    assert modified_data.body == JSONResponse(content=response_data).body
