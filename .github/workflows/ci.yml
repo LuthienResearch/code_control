@@ -7,11 +7,15 @@ on:
     branches: [ main ]
 
 jobs:
-  lint-and-test:
+  format-lint-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref }}
     
     - name: Set up Python 3.13
       uses: actions/setup-python@v5
@@ -28,7 +32,20 @@ jobs:
     - name: Install dependencies
       run: poetry install --no-interaction
     
-    - name: Run linting
+    - name: Format code
+      if: github.event_name == 'pull_request'
+      run: |
+        poetry run black .
+        poetry run isort .
+    
+    - name: Commit formatting changes
+      if: github.event_name == 'pull_request'
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "Auto-format code with Black and isort"
+        file_pattern: "*.py"
+    
+    - name: Run linting check
       run: |
         poetry run black --check .
         poetry run isort --check .
