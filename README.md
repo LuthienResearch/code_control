@@ -65,14 +65,14 @@ poetry install
 # Run tests
 poetry run pytest
 
-# Run linting
-poetry run ruff check .
-
 # Run type checking
 poetry run mypy .
 
 # Format code
 poetry run black . && poetry run isort .
+
+# Set up pre-commit hooks (formats code automatically on commit)
+poetry run pre-commit install
 ```
 
 ## License
