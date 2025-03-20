@@ -1,4 +1,5 @@
 """Pytest configuration file for Luthien Code Control tests."""
+
 import pytest
 from fastapi.testclient import TestClient
 

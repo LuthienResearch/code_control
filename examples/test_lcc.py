@@ -8,7 +8,7 @@ It uses the OpenAI SDK but points it to the local LCC server.
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 import httpx
 from dotenv import load_dotenv
@@ -39,15 +39,15 @@ def create_client() -> OpenAI:
 def test_chat_completion() -> Dict[str, Any]:
     """Test chat completion API."""
     client = create_client()
-    
+
     try:
         response = client.chat.completions.create(
             model="claude-3-5-sonnet-20240620",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": "Hello! What's the capital of France?"}
+                {"role": "user", "content": "Hello! What's the capital of France?"},
             ],
-            max_tokens=100
+            max_tokens=100,
         )
         print("\n--- Chat Completion Test ---")
         print(f"Success! Response: {response.choices[0].message.content}")
@@ -57,16 +57,15 @@ def test_chat_completion() -> Dict[str, Any]:
         return {"success": False, "error": str(e)}
 
 
-
 def main() -> None:
     """Run all tests."""
     print(f"Testing LCC proxy at {LCC_URL}")
     print(f"Using client identifier: {CLIENT_API_KEY}")
     print("The actual provider API key is managed by the LCC server")
-    
+
     # Run tests
     chat_result = test_chat_completion()
-    
+
     # Summary
     print("\n=== Test Summary ===")
     print(f"Chat Completions: {'✅ Passed' if chat_result['success'] else '❌ Failed'}")

@@ -33,6 +33,7 @@ htmlcov/
 env/
 venv/
 ENV/
+scratch/
 
 # IDE
 .idea/

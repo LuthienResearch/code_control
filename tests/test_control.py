@@ -1,4 +1,5 @@
 """Tests for the control module."""
+
 import pytest
 
 from luthien_code_control import control
@@ -6,9 +7,12 @@ from luthien_code_control import control
 
 def test_analyze_request():
     """Test the analyze_request function."""
-    request_data = {"model": "gpt-4", "messages": [{"role": "user", "content": "Hello"}]}
+    request_data = {
+        "model": "gpt-4",
+        "messages": [{"role": "user", "content": "Hello"}],
+    }
     allowed, reason, modified_data = control.analyze_request(request_data)
-    
+
     # Basic test for now - just make sure it doesn't crash
     assert allowed is True
     assert reason == "Request allowed"
@@ -33,7 +37,7 @@ def test_analyze_response():
         ],
     }
     allowed, reason, modified_data = control.analyze_response(response_data)
-    
+
     # Basic test for now - just make sure it doesn't crash
     assert allowed is True
     assert reason == "Response allowed"

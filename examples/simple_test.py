@@ -3,6 +3,7 @@
 Direct test of Anthropic's OpenAI compatible API.
 """
 import os
+
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -25,7 +26,7 @@ response = client.chat.completions.create(
     model="claude-3-5-sonnet-20240620",  # Anthropic model name
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": "Hello! What's the capital of France?"}
+        {"role": "user", "content": "Hello! What's the capital of France?"},
     ],
     max_tokens=100,
 )

@@ -3,6 +3,7 @@ Configuration module for Luthien Code Control.
 
 This module contains configuration settings for the LCC application.
 """
+
 import os
 from typing import Optional
 
@@ -25,17 +26,18 @@ DEFAULT_HEADER_MAP = {
     "openai": "Authorization",
 }
 
+
 # Function to get the API key - first check LCC_API_KEY, then the provider-specific env var
 def get_api_key() -> Optional[str]:
     """
     Get the API key for the target API.
-    
+
     Returns:
         The API key if found, None otherwise
     """
     if API_KEY:
         return API_KEY
-    
+
     # If LCC_API_KEY isn't set, try the provider-specific env var
     provider_key = os.getenv(API_KEY_ENV)
     if provider_key:
@@ -43,18 +45,20 @@ def get_api_key() -> Optional[str]:
         if API_PROVIDER.lower() == "openai" and not provider_key.startswith("Bearer "):
             return f"Bearer {provider_key}"
         return provider_key
-    
+
     return None
+
 
 # Function to get the appropriate header name for the API key
 def get_auth_header() -> str:
     """
     Get the appropriate authorization header name for the API provider.
-    
+
     Returns:
         The header name to use for the API key
     """
     return API_KEY_HEADER or DEFAULT_HEADER_MAP.get(API_PROVIDER.lower(), "x-api-key")
+
 
 # Configuration for logging
 LOG_LEVEL = os.getenv("LCC_LOG_LEVEL", "INFO")
