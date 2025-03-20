@@ -25,7 +25,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
 pytest-cov = "^6.0.0"
-ruff = "^0.11.0"
 black = "^25.1.0"
 mypy = "^1.15.0"
 isort = "^6.0.1"
@@ -49,10 +48,7 @@ disallow_untyped_decorators = true
 no_implicit_optional = true
 strict_optional = true
 
-[tool.ruff]
-line-length = 88
-target-version = "py313"
-select = ["E", "F", "B", "I", "N", "UP", "PL", "RUF"]
+# Removed ruff configuration
 
 [tool.black]
 line-length = 88
